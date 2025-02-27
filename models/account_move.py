@@ -11,7 +11,7 @@ class AccountMove(models.Model):
         help="Fechas de los pagos asociados a esta factura, separadas por coma.",
     )
 
-    @api.depends("payment_ids", "payment_ids.date", "type")
+    @api.depends("payment_ids", "payment_ids.date", "move_type")
     def _compute_payment_date_str(self):
         for move in self:
             payments = move.payment_ids.filtered(lambda p: p.state == "posted")
