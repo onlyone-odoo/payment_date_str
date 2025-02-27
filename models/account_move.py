@@ -21,9 +21,9 @@ class AccountMove(models.Model):
                     date.strftime("%Y-%m-%d") for date in payment_dates
                 )
             else:
+                if move.move_type == 'out_invoice':
+                move.payment_date_str = "Sin pago cobrado"
+            elif move.move_type == 'in_invoice':
+                move.payment_date_str = "Sin pago realizado"
+            else:
                 move.payment_date_str = False
-            # Opcional: ajustar el nombre del campo según el tipo
-            if move.move_type == "out_invoice":
-                move.payment_date_str = move.payment_date_str or "Sin pagos recibidos"
-            elif move.move_type == "in_invoice":
-                move.payment_date_str = move.payment_date_str or "Sin pagos realizados"
