@@ -1,0 +1,23 @@
+<!-- Vista tree para facturas de cliente -->
+<record id="view_account_move_tree_inherit" model="ir.ui.view">
+    <field name="name">account.move.tree.inherit</field>
+    <field name="model">account.move</field>
+    <field name="inherit_id" ref="account.view_invoice_tree"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='invoice_date']" position="after">
+            <field name="payment_date_str"/>
+        </xpath>
+    </field>
+</record>
+
+<!-- Vista tree para facturas de proveedor -->
+<record id="view_account_in_invoice_tree_inherit" model="ir.ui.view">
+    <field name="name">account.in.invoice.tree.inherit</field>
+    <field name="model">account.move</field>
+    <field name="inherit_id" ref="account.view_in_invoice_tree"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='invoice_date']" position="after">
+            <field name="payment_date_str"/>
+        </xpath>
+    </field>
+</record>
