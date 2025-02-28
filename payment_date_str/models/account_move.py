@@ -12,16 +12,18 @@ class AccountMove(models.Model):
     )
 
     @api.depends(
-        "line_ids.matched_debit_ids.debit_move_id.date",
-        "line_ids.matched_credit_ids.credit_move_id.date",
+        "line_ids.matched_debit_ids.debit_move_id",
+        "line_ids.matched_credit_ids.credit_move_id",
     )
     def _compute_payment_date_str(self):
         for move in self:
-            payments = (
+            payment_moves = (
                 move.line_ids.matched_debit_ids.debit_move_id
                 | move.line_ids.matched_credit_ids.credit_move_id
             )
-            payments = payments.filtered(lambda p: p.state == "posted")
+            payments = payment_moves.filtered(
+                lambda m: m.payment_id and m.payment_id.state == "posted"
+            )
 
             if payments:
                 payment_dates = sorted(payments.mapped("date"))
@@ -29,9 +31,10 @@ class AccountMove(models.Model):
                     date.strftime("%Y-%m-%d") for date in payment_dates
                 )
             else:
-                if move.move_type == "out_invoice":
-                    move.payment_date_str = "Sin pago cobrado"
-                elif move.move_type == "in_invoice":
-                    move.payment_date_str = "Sin pago realizado"
-                else:
-                    move.payment_date_str = False
+                move.payment_date_str = (
+                    "Sin pago cobrado"
+                    if move.move_type == "out_invoice"
+                    else "Sin pago realizado"
+                    if move.move_type == "in_invoice"
+                    else False
+                )
